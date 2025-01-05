@@ -63,7 +63,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '@/axios'
+import { request } from '@/api/request'
 
 const router = useRouter()
 const todos = ref([])
@@ -79,7 +79,7 @@ const filters = ref({
 const fetchTodos = async () => {
   try {
     loading.value = true
-    const response = await axios.get('/api/todos')
+    const response = await request.get('/todos')
     todos.value = response.data
   } catch (error) {
     console.error('获取待办事项失败:', error)
@@ -90,7 +90,7 @@ const fetchTodos = async () => {
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('/api/categories')
+    const response = await request.get('/categories')
     categories.value = response.data
   } catch (error) {
     console.error('获取分类失败:', error)

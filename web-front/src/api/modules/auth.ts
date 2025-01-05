@@ -1,54 +1,16 @@
 import request from '../request'
-import type { User } from './user'
-
-export interface LoginData {
-  email: string
-  password: string
-}
-
-export interface RegisterData extends LoginData {
-  name: string
-  password_confirmation: string
-}
-
-export interface AuthResponse {
-  access_token: string
-  token_type: string
-  user: User
-}
+import type { LoginData } from '@/types'
 
 export const authApi = {
-  // 用户登录
-  login: (data: LoginData) => {
-    return request<AuthResponse>({
-      url: '/auth/login',
-      method: 'post',
-      data
-    })
-  },
-
-  // 用户注册
-  register: (data: RegisterData) => {
-    return request<AuthResponse>({
-      url: '/auth/register',
-      method: 'post',
-      data
-    })
-  },
-
-  // 获取当前用户信息
-  getProfile: () => {
-    return request<User>({
-      url: '/auth/profile',
-      method: 'get'
-    })
-  },
-
-  // 退出登录
-  logout: () => {
-    return request({
-      url: '/auth/logout',
-      method: 'post'
-    })
-  }
+  // 修改登录接口路径
+  login: (data: LoginData) => 
+    request.post('/auth/login', data),
+  
+  // 修改获取用户信息接口路径
+  getProfile: () => 
+    request.get('/user/profile'),
+  
+  // 修改登出接口路径
+  logout: () => 
+    request.post('/auth/logout')
 } 
