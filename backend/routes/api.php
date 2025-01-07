@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\TodoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TodoController;
+use App\Http\Controllers\TodoDetailController;
+use App\Http\Controllers\AttachmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +25,18 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     // 用户相关
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/user', [AuthController::class, 'user']);
 
-    // 待办事项相关
+    // 待办事项
     Route::apiResource('todos', TodoController::class);
+
+    // 待办事项详情
+    Route::get('/todos/{todo}/detail', [TodoDetailController::class, 'show']);
+    Route::put('/todos/{todo}/detail', [TodoDetailController::class, 'update']);
+    Route::delete('/todos/{todo}/detail', [TodoDetailController::class, 'destroy']);
+
+    // 附件
+    Route::post('/todos/{todo}/attachments', [AttachmentController::class, 'store']);
+    Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download']);
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy']);
 });

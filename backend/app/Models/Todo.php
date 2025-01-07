@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Todo extends Model
 {
@@ -16,9 +18,9 @@ class Todo extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'title',
-        'completed',
-        'user_id'
+        'completed'
     ];
 
     /**
@@ -36,5 +38,21 @@ class Todo extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * 获取待办事项的详细信息
+     */
+    public function detail(): HasOne
+    {
+        return $this->hasOne(TodoDetail::class);
+    }
+
+    /**
+     * 获取待办事项的附件列表
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 } 
