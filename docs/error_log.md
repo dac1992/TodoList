@@ -657,3 +657,63 @@ curl -X POST ... # 可能会出现参数解析错误
    - 收集性能数据
    - 分析性能瓶颈
    - 及时进行优化 
+
+### 2024-01-07 消息提示重复问题
+
+### 错误描述
+在添加待办事项时，成功提示消息会显示两次。这是因为在组件和 store 层面都添加了成功提示。
+
+### 原因分析
+1. 违反了单一职责原则：
+   - store 不仅处理状态管理，还处理 UI 反馈
+   - 组件和 store 都在处理同样的提示逻辑
+2. 代码结构问题：
+   - 消息提示逻辑分散在不同层级
+   - 缺乏统一的消息处理策略
+
+### 解决方案
+1. 遵循关注点分离原则：
+   ```typescript
+   // store 只负责状态管理
+   const create = async (title: string) => {
+     try {
+       loading.value = true
+       error.value = null
+       const response = await todoApi.create(title)
+       items.value.unshift(response.data.data)
+     } catch (err) {
+       error.value = '创建待办事项失败'
+       throw err
+     } finally {
+       loading.value = false
+     }
+   }
+   ```
+
+2. 统一在组件层面处理消息提示：
+   ```typescript
+   // 组件负责处理 UI 反馈
+   const handleAdd = async () => {
+     try {
+       await todoStore.create(newTodo.value.trim())
+       newTodo.value = ''
+       ElMessage.success('添加成功')
+     } catch (error) {
+       ElMessage.error('添加待办事项失败')
+     }
+   }
+   ```
+
+### 经验教训
+1. 遵循单一职责原则
+2. 保持关注点分离
+3. 统一消息处理策略
+4. 在合适的层级处理 UI 反馈
+5. 避免重复的提示逻辑
+
+### 预防措施
+1. 制定清晰的代码分层策略
+2. 明确各层职责
+3. 统一消息处理方式
+4. 建立代码审查机制
+5. 保持代码简洁性 
